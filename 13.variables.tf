@@ -1,0 +1,12 @@
+variable "vpc_cidr_block" { type = string }
+variable "public_subnet_cidrs" { type = list(any) }
+variable "private_subnet_cidrs" { type = list(any) }
+variable "environment" { type = string }
+variable "projid" { type = string }
+variable "vpc_name" { type = string }
+variable "aws_region" { type = string }
+variable "key_name" { type = string }
+variable "azs" { type = list(any) }
+variable "instance_type" { type = map(any) }
+variable "amis" { type = map(any) }
+variable "imagename" { type = string }
