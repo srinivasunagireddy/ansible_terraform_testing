@@ -1,0 +1,15 @@
+---
+- name: Playbook to install packages
+  hosts: pub
+  gather_facts: true
+  become: true
+  become_user: ansibleadmin
+  vars:
+    TFORM: 1.14.1
+  tasks:
+    - name: perform apt update
+      shell: sudo apt update
+    - name: install the tools
+      shell: sudo apt install -y uzip jq net-tools stress
+    - name: check the host names
+      shell: cat /etc/lsb-release
