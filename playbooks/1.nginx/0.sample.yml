@@ -3,7 +3,7 @@
   hosts: pub
   gather_facts: yes
   become: true
-  become_user: root
+  become_user: ansibleadmin
   vars:
     TFORM: 1.14.1
   tasks:
