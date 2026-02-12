@@ -10,6 +10,6 @@
     - name: perform apt update
       shell: sudo apt update
     - name: install the tools
-      shell: sudo apt install -y uzip jq net-tools stress
+      shell: sudo apt install -y unzip jq net-tools stress
     - name: check the host names
       shell: cat /etc/lsb-release
