@@ -12,7 +12,7 @@
         - update
 
     - name: Clone Git Repo
-      shell: cd /tmp && git clone https://github.com/saikiranpi/ansible_testing.git ansible_testing_page
+      shell: cd /tmp && git clone https://github.com/srinivasunagireddy/ansible_testing.git ansible_testing_page
       tags:
         - clone
 

@@ -1,9 +1,9 @@
 ---
 - name: Playbook to install packages
   hosts: pub
-  gather_facts: true
+  gather_facts: yes
   become: true
-  become_user: ansibleadmin
+  become_user: root
   vars:
     TFORM: 1.14.1
   tasks:
