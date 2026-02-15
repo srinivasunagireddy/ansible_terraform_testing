@@ -3,89 +3,93 @@
   hosts: testserver01
   become: true
   tasks:
-    - name: Install Redis dependencies
-      apt:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - build-essential
-        - tcl
-      when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '24.04'
+    pre_tasks:
+      - name: Update apt cache
+        apt:
+          update_cache: yes
+      - name: Install Redis dependencies
+        apt:
+          name: "{{ item }}"
+          state: present
+        loop:
+          - build-essential
+          - tcl
+        when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '24.04'
 
-    - name: Check Redis Status
-      shell: systemctl status redis --no-pager
-      register: redis_status
-      ignore_errors: true
+      - name: Check Redis Status
+        shell: systemctl status redis --no-pager
+        register: redis_status #stroing status of redis whether the redis installed or not
+        ignore_errors: true
 
-    - name: Download and extract Redis source code
-      get_url:
-        url: "http://download.redis.io/releases/redis-6.2.5.tar.gz"
-        dest: "/tmp/redis.tar.gz"
-      when: redis_status.rc != 0
+      - name: Download and extract Redis source code
+        get_url:
+          url: "http://download.redis.io/releases/redis-6.2.5.tar.gz"
+          dest: "/tmp/redis.tar.gz"
+        when: redis_status.rc != 0 #Installing the redis when status not equal to zero
 
-    - name: Extract Redis source code
-      unarchive:
-        src: "/tmp/redis.tar.gz"
-        dest: "/tmp"
-        remote_src: yes
-      when: redis_status.rc != 0
+      - name: Extract Redis source code
+        unarchive:
+          src: "/tmp/redis.tar.gz"
+          dest: "/tmp"
+          remote_src: yes
+        when: redis_status.rc != 0
 
-    - name: Ensure build dependencies are installed on RedHat-based systems
-      yum:
-        name: make, gcc
-        state: present
-      when: ansible_os_family == "RedHat"
+      - name: Ensure build dependencies are installed on RedHat-based systems
+        yum:
+          name: make, gcc
+          state: present
+        when: ansible_os_family == "RedHat"
 
-    - name: Ensure build dependencies are installed on Debian-based systems
-      apt:
-        name:
-          - make
-          - gcc
-        state: present
-      when: ansible_os_family == "Debian"
+      - name: Ensure build dependencies are installed on Debian-based systems
+        apt:
+          name:
+            - make
+            - gcc
+          state: present
+        when: ansible_os_family == "Debian"
 
-    - name: Compile and install Redis
-      shell: |
-        cd /tmp/redis-6.2.5 
-        make install
-      args:
-        executable: /bin/bash
-      when: redis_status.rc != 0
+      - name: Compile and install Redis
+        shell: |
+          cd /tmp/redis-6.2.5 
+          make install
+        args:
+          executable: /bin/bash
+        when: redis_status.rc != 0
 
-    - name: Configure Redis
-      copy:
-        src: redis.conf
-        dest: /etc/redis.conf
-        owner: root
-        group: root
-        mode: "0644"
-      notify:
-        - Restart Redis
-        - Backup Redis Conf File
-        - Download Redis Backup Config File Flat
-        - Download Redis Backup Config File Without Flat
+      - name: Configure Redis
+        copy:
+          src: redis.conf
+          dest: /etc/redis.conf
+          owner: root
+          group: root
+          mode: "0644"
+        notify:
+          - Restart Redis
+          - Backup Redis Conf File
+          - Download Redis Backup Config File Flat
+          - Download Redis Backup Config File Without Flat
 
-    - name: Create Redis systemd service
-      copy:
-        src: redis.service
-        dest: /etc/systemd/system/redis.service
-        owner: root
-        group: root
-        mode: "0644"
-      notify:
-        - Restart Redis
-        - Backup Redis Conf File
+      - name: Create Redis systemd service
+        copy:
+          src: redis.service
+          dest: /etc/systemd/system/redis.service
+          owner: root
+          group: root
+          mode: "0644"
+        notify:
+          - Restart Redis
+          - Backup Redis Conf File
 
-    - name: Start Redis service
-      systemd:
-        name: redis
-        state: started
-        enabled: yes
-      when: redis_status.rc != 0
+      - name: Start Redis service
+        systemd:
+          name: redis
+          state: started
+          enabled: yes
+        when: redis_status.rc != 0
 
-    - name: Checking Delegate Option
-      shell: hostname
-      delegate_to: localhost
+      - name: Checking Delegate Option
+        shell: hostname
+        delegate_to: localhost
 
   handlers:
     - name: Backup Redis Conf File
