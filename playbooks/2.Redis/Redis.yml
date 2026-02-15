@@ -2,10 +2,15 @@
 - name: Install Redis Server
   hosts: testserver01
   become: true
+  # Pre-task added to refresh APT package cache.
+  # Required because Ubuntu 24.04 cloud instances may have stale package metadata,
+  # which can cause 404 errors during dependency installation.
+  # Ensures latest repository index before installing packages.
   pre_tasks:
     - name: Update apt cache
       apt:
         update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
   tasks:
     - name: Install Redis dependencies
       apt:
