@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-{{ hostname }}
+# Hostname: {{ hostname }}
 
 [client]
 port = {{ mysql_port }}
@@ -12,20 +12,14 @@ datadir = {{ mysql_data_dir }}
 socket = {{ mysql_socket }}
 pid-file = {{ mysql_pid_file }}
 
-# Slow query log configuration.
-
 {% if mysql_slow_query_log_enabled %}
 slow_query_log = 1
 slow_query_log_file = {{ mysql_slow_query_log_file }}
 long_query_time = {{ mysql_slow_query_time }}
 {% endif %}
 
-# InnoDB settings.
-
 innodb_buffer_pool_size = {{ mysql_innodb_buffer_pool_size }}
 innodb_log_file_size = {{ mysql_innodb_log_file_size }}
-
-# Setting max connections
 
 {% if mysql_max_connections | int > 3000 %}
 max_connections = 3000
