@@ -8,7 +8,7 @@
     #Static Variables
     custom_heading: "Welcome To DevSecOps By Srinivasu Nagireddy"
     custom_para: "We Are Studying Ansible Templates Practically..!!!"
-    aws_account: "211125710812"
+    aws_account: "004619892480"
     # #Dynamic variables from Ansible Facts
     #todays_date: "{{ ansible_facts['date_time']['date'] }}"
     # host_name: "{{ ansible_facts['hostname'] }}"
