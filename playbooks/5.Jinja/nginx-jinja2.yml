@@ -26,11 +26,11 @@
       apt: >
         name=nginx
         state=present
-        update_cache: yes
-      register: apt_status
-      retries: 5
-      delay: 15
-      until: apt_status is success
+      #   update_cache: yes
+      # register: apt_status
+      # retries: 5
+      # delay: 15
+      # until: apt_status is success
       tags:
         - install
     - name: Copy the index.j2 Template to index destination folder.
