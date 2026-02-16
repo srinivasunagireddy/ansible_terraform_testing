@@ -35,7 +35,7 @@
         - install
     - name: Copy the index.j2 Template to index destination folder.
       template: >
-        src=/home/ansibleadmin/ansible_terraform_testing/index.j2
+        src=/home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/index.j2
         dest=/var/www/html/index.nginx-debian.html
         owner=root
         group=root
@@ -45,7 +45,7 @@
         - j2
     - name: Copy the style files to destination folder.
       copy: >
-        src=/home/ansibleadmin/ansible_terraform_testing/style.css
+        src=/home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/style.css
         dest=/var/www/html/style.css
         owner=root
         group=root
@@ -55,7 +55,7 @@
         - style
     - name: Copy the javascript files to destination folder.
       copy: >
-        src=/home/ansibleadmin/ansible_terraform_testing/scorekeeper.js
+        src=/home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/scorekeeper.js
         dest=/var/www/html/scorekeeper.js
         owner=root
         group=root
