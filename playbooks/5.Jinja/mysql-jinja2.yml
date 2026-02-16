@@ -4,6 +4,7 @@
   gather_facts: yes
   become: yes
   become_user: root
+
   vars:
     mysql_socket: /var/lib/mysql/mysql.sock
     mysql_port: 3306
@@ -20,42 +21,61 @@
     mysql_thread_cache_size: 102
     mysql_binding_address: "0.0.0.0"
     hostname: "{{ inventory_hostname }}"
+
   tasks:
     - name: Installing Mysql and Dependencies
       package:
-        name: "{{item}}"
+        name: "{{ item }}"
         state: present
         update_cache: yes
       loop:
         - mysql-server
         - mysql-client
-        - python3-mysqldb
-        - libmysqlclient-dev
+        - python3-pymysql
       become: yes
-    - name: Copy the index.j2 Template to index destination folder.
-      template: >
-        src=/home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/mysql_conf.j2
-        dest=/etc/mysql/mysql.conf.d/mysqld.cnf
-        owner=root
-        group=root
-        mode=0644
-    - name: start and enable mysql service
+
+    - name: Copy the index.j2 Template to index destination folder
+      template:
+        src: /home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/mysql_conf.j2
+        dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Restart MySQL
+
+    - name: Start and enable mysql service
       service:
         name: mysql
         state: started
         enabled: yes
-    - name: create a new database
-      mysql_db: >
-        name=myflixdb 
-        state=present 
-        login_user=root
+
+    - name: Create a new database
+      mysql_db:
+        name: myflixdb
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
       tags:
         - mysql
+
     - name: Copy sample data to tmp folder
-      copy: src=/home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/dump.sql dest=/tmp/dump.sql
+      copy:
+        src: /home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/dump.sql
+        dest: /tmp/dump.sql
       tags:
         - mysql
+
     - name: Insert sample data into database
-      mysql_db: name=myflixdb state=import target=/tmp/dump.sql
+      mysql_db:
+        name: myflixdb
+        state: import
+        target: /tmp/dump.sql
+        login_unix_socket: /var/run/mysqld/mysqld.sock
       tags:
         - mysql
+
+  handlers:
+    - name: Restart MySQL
+      service:
+        name: mysql
+        state: restarted

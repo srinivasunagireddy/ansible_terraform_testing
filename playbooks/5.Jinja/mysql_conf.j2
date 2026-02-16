@@ -5,6 +5,7 @@
 [client]
 port = {{ mysql_port }}
 socket = {{ mysql_socket }}
+
 [mysqld]
 port = {{ mysql_port }}
 datadir = {{ mysql_data_dir }}
@@ -37,4 +38,4 @@ max_connections = {{ mysql_max_connections }}
 thread_cache_size = {{ (mysql_max_connections | int * 0.15) | int }}
 {% endif %}
 
-bind-address = {{ mysql_binding_address}}
+bind-address = {{ mysql_binding_address }}
