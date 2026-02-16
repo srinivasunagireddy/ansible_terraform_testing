@@ -21,8 +21,17 @@
         echo "To DevSecOps By Saikiran Pinapathruni ${HOME}"
       tags:
         - command
-    - name: Run  Env Using COMMAND Variables
-      command: env && df -h && free
+    #- name: Run  Env Using COMMAND Variables
+    #  command: env && df -h && free
+
+    - name: Run env
+      command: env
+
+    - name: Run df
+      command: df -h
+
+    - name: Run free
+      command: free
       tags:
         - command
 
