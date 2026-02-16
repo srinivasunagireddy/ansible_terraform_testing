@@ -68,7 +68,7 @@
 
     - name: Import database using mysql CLI
       shell: |
-        mysql --protocol=socket -uroot -S /var/run/mysqld/mysqld.sock myflixdb < /tmp/dump.sql
+        tail -n +10 /tmp/dump.sql | mysql --protocol=socket -uroot -S /var/run/mysqld/mysqld.sock myflixdb
       args:
         executable: /bin/bash
 
