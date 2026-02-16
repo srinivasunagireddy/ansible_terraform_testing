@@ -58,3 +58,23 @@
 # 3. **Managing Non-Python Systems**: If you have to manage network devices or legacy systems that don’t have Python, `raw` lets you still issue commands to them as long as they support SSH.
 
 # In short, `raw` is a lightweight way to interact with systems that lack Ansible's typical requirements or when you need a direct, quick command run.
+
+#- name: Run COMMAND Module
+# The command module does NOT invoke a shell.
+# Therefore, shell variables like ${HOME} will NOT be expanded.
+# Use Ansible facts (e.g., {{ ansible_env.HOME }}) instead of ${HOME}.
+#command: echo "To DevSecOps By Saikiran Pinapathruni {{ ansible_env.HOME }}"
+# tags:
+#  - command
+
+#- name: Run Env Using COMMAND Variables
+# The command module cannot interpret shell operators like '&&'.
+# It executes arguments directly without shell parsing.
+# When using 'env && df -h && free', Ansible tries to execute:
+# ["env", "&&", "df", "-h", "&&", "free"]
+# This causes error code 127 (command not found),
+# because '&&' is treated as a file instead of a shell operator.
+# To use command chaining (&&), use the shell module instead.
+#shell: env && df -h && free
+# tags:
+#  - command
