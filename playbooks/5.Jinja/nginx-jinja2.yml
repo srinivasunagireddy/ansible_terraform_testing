@@ -10,8 +10,8 @@
     custom_para: "We Are Studying Ansible Templates Practically..!!!"
     aws_account: "004619892480"
     # #Dynamic variables from Ansible Facts
-    #todays_date: "{{ ansible_facts['date_time']['date'] }}"
-    # host_name: "{{ ansible_facts['hostname'] }}"
+    todays_date: "{{ ansible_facts['date_time']['date'] }}"
+    host_name: "{{ ansible_facts['hostname'] }}"
     # fqdn_name: "{{ ansible_facts['fqdn'] }}"
     # os_family: "{{ ansible_facts['distribution'] }}"
     # os_dest: "{{ ansible_facts['distribution_version'] }}"
