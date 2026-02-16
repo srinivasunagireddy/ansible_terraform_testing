@@ -11,30 +11,26 @@
     mysql_data_dir: /var/lib/mysql
     mysql_pid_file: /var/lib/mysql/mysqld.pid
     mysql_slow_query_log_enabled: true
-    mysql_slow_query_log: 1
     mysql_slow_query_log_file: /var/lib/mysql/mysql-slow.log
-    mysql_long_query_time: 3
     mysql_slow_query_time: 3
     mysql_innodb_buffer_pool_size: 5734M
     mysql_innodb_log_file_size: 1433M
     mysql_max_connections: 682
-    mysql_thread_cache_size: 102
     mysql_binding_address: "0.0.0.0"
     hostname: "{{ inventory_hostname }}"
 
   tasks:
-    - name: Installing Mysql and Dependencies
+    - name: Install MySQL and required packages
       package:
-        name: "{{ item }}"
+        name:
+          - mysql-server
+          - mysql-client
+          - python3-pymysql
+          - dos2unix
         state: present
         update_cache: yes
-      loop:
-        - mysql-server
-        - mysql-client
-        - python3-pymysql
-      become: yes
 
-    - name: Copy the index.j2 Template to index destination folder
+    - name: Copy MySQL configuration template
       template:
         src: /home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/mysql_conf.j2
         dest: /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -44,35 +40,37 @@
       notify:
         - Restart MySQL
 
-    - name: Start and enable mysql service
+    - name: Start and enable MySQL service
       service:
         name: mysql
         state: started
         enabled: yes
 
-    - name: Create a new database
+    - name: Create database
       mysql_db:
         name: myflixdb
         state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
-      tags:
-        - mysql
 
-    - name: Copy sample data to tmp folder
+    - name: Copy dump file to remote server
       copy:
         src: /home/ansibleadmin/ansible_terraform_testing/playbooks/5.Jinja/dump.sql
         dest: /tmp/dump.sql
-      tags:
-        - mysql
 
-    - name: Insert sample data into database
-      mysql_db:
-        name: myflixdb
-        state: import
-        target: /tmp/dump.sql
-        login_unix_socket: /var/run/mysqld/mysqld.sock
-      tags:
-        - mysql
+    - name: Convert dump file to Unix format
+      command: dos2unix /tmp/dump.sql
+
+    - name: Remove invalid Windows header line
+      lineinfile:
+        path: /tmp/dump.sql
+        regexp: "^MySQL dump"
+        state: absent
+
+    - name: Import database using mysql CLI
+      shell: |
+        mysql --protocol=socket -uroot -S /var/run/mysqld/mysqld.sock myflixdb < /tmp/dump.sql
+      args:
+        executable: /bin/bash
 
   handlers:
     - name: Restart MySQL
