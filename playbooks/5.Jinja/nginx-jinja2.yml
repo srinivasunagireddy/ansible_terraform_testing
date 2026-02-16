@@ -6,11 +6,11 @@
   become_user: root
   vars:
     #Static Variables
-    custom_heading: "Welcome To DevSecOps By Saikiran Pinapathruni"
+    custom_heading: "Welcome To DevSecOps By Srinivasu Nagireddy"
     custom_para: "We Are Studying Ansible Templates Practically..!!!"
     aws_account: "211125710812"
     # #Dynamic variables from Ansible Facts
-    todays_date: "{{ ansible_facts['date_time']['date'] }}"
+    #todays_date: "{{ ansible_facts['date_time']['date'] }}"
     # host_name: "{{ ansible_facts['hostname'] }}"
     # fqdn_name: "{{ ansible_facts['fqdn'] }}"
     # os_family: "{{ ansible_facts['distribution'] }}"
